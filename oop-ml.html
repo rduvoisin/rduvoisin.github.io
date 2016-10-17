@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+            <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>R.O. Duvi-san</title>
+
+
+        <!-- Bootstrap Core CSS -->
+        <link href="./theme/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="./theme/css/clean-blog.min.css" rel="stylesheet">
+
+        <!-- Code highlight color scheme -->
+            <link href="./theme/css/code_blocks/darkly.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+
+        <meta name="tags" contents="machine learning" />
+        <meta name="tags" contents="code" />
+
+
+			<meta property="og:locale" content="en">
+		<meta property="og:site_name" content="R.O. Duvi-san">
+
+	<meta property="og:type" content="article">
+	<meta property="article:author" content="">
+	<meta property="og:url" content="./oop-ml.html">
+	<meta property="og:title" content="you down with oop?">
+	<meta property="og:description" content="you know me!">
+	<meta property="og:image" content="./images/matrix_FULL_MISS_4_crop_dark.png">
+	<meta property="article:published_time" content="2016-04-15 05:08:00-05:00">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">R.O. Duvi-san</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+        <header class="intro-header" style="background-image: url('images/matrix_FULL_MISS_4_crop_dark.png')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>you down with oop?</h1>
+                            <h3 class="subheading">you know me!</h3>
+                        <span class="meta">Posted by
+                                <a href="./author/rebeccah-duvoisin.html">Rebeccah Duvoisin</a>
+                             on Fri 15 April 2016
+                        </span>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    <!-- Post Content -->
+    <article>
+        <div class="section" id="see-how-classes-can-help-to-shape-your-machine-learning-procedure">
+<h2 id="see-how-classes-can-help-to-shape-your-machine-learning-procedure">See how classes can help to shape your machine learning procedure</h2>
+<ul class="simple">
+<li><a class="reference internal" href="#trainer"><strong>Trainer</strong></a></li>
+<li><a class="reference internal" href="#modelling"><strong>Modelling</strong></a></li>
+<li><a class="reference internal" href="#smart"><strong>Smarter Functions</strong></a> for data preparation</li>
+</ul>
+<p>Machine Learning typically iterate through numerous subsets of your data in order to cross-validate models on training and testing data.  Pythons <a class="reference external" href="http://Scikit-learn.org/stable/">Scikit-Learn</a>'s library allows users to push their data through a loop of out-of-the-box models for selection quite easily.</p>
+<blockquote>
+However, documenting the creation and evaluation of these subsets within that loop can be dizzying, particularly where preprocessing and multiple imputation are necessary and depend on the completeness of the given subset.</blockquote>
+<p>Therefore, while your results may (not) be clear <em>at the end</em>, dynamic documention of analyses on these interim subsets <em>during</em> the loop often requires heavy lifting in the modelling loop and overly complicates the code.</p>
+<div class="section" id="write-objects-to-envelope-your-data-raw-meta-and-learned">
+<h3 id="write-objects-to-envelope-your-data-raw-meta-and-learned">Write objects to envelope your data (raw, meta, and learned)</h3>
+<p>The code below exemplifies a suite of classes to envelope data into robust objects, namely, <a class="reference internal" href="#trainer"><strong>Trainer</strong></a>  and <a class="reference internal" href="#modelling"><strong>Modelling</strong></a>  classes so that it can extracted at the appropriate points of the model selection loop.</p>
+</div>
+</div>
+<div class="section" id="a-trainer-class">
+<span id="trainer"></span><h2 id="a-trainer-class_1">A <tt class="docutils literal">Trainer</tt> Class</h2>
+<p>Having a class dedicated to storing important metadata about your dataset can facilitate looping through models.  This <tt class="docutils literal">Trainer</tt> object is a wrapper for a Pandas Dataframe.</p>
+<p>It holds attributes about a testing, training or holdout set.  A <tt class="docutils literal">Trainer</tt> object not only holds the dataset in a dataframe, it also holds the dataset's metadata, telling us which varaible is the outcome variable to classify, and which variables require imputation.  This enables us to dynamically query the metadata to determine which preprocessing steps must be taken to prepare a given dataset for modelling:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Trainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Initializes a dataset as a trainer object, which contains:</span>
+<span class="sd">        * a name</span>
+<span class="sd">        * a pandas DataFrame = data</span>
+<span class="sd">        * an outcome name (the dependent feature)</span>
+<span class="sd">        * a target for modelling (outcome_name by default)</span>
+<span class="sd">        * optionally a heritage parent</span>
+<span class="sd">        * optionally a validation DataFrame</span>
+<span class="sd">    '''</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">outcome_name</span><span class="p">,</span> <span class="n">validator</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">ModelTrainIndex</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c"># self._data, self.features = self._makeData(dataframe)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__data_original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__makeData</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__makeData</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__makeData</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span> <span class="o">=</span> <span class="n">outcome_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="o">=</span> <span class="n">outcome_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_median</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_toimpute</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_missings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__updateMissings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">ModelTrainIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span> <span class="o">=</span> <span class="n">validator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imputed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_estimators</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the Trainer's name id.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">best</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Get this Trainer's dictionary of</span>
+<span class="sd">        best classifiers obtained for any modelling target</span>
+<span class="sd">        that has been obtained from these Trainer data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_estimators</span>
+
+
+    <span class="k">def</span> <span class="nf">set_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">):</span>
+        <span class="sd">'''Set a key and estimator model in the best models dict'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_estimators</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_estimators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pair</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">'Must pass a binary tuple, list, or dictionary'</span><span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the Trainer's ordinal number within a ModelTrain's trainer_list.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number</span>
+
+
+    <span class="nd">@id.setter</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="sd">'''Modifies the Trainer's ordinal number to it's index a ModelTrain's trainer_list.'''</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">number</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outcome</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Returns the feature that is the Trainer's</span>
+<span class="sd">        current modelling target.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Returns the feature that is the Trainer's</span>
+<span class="sd">        current modelling target.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
+
+    <span class="nd">@target.setter</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newtarget</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Sets the feature that is the Trainer's</span>
+<span class="sd">        current modelling target.'''</span>
+        <span class="k">if</span> <span class="n">newtarget</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"{} is not a feature of Trainer object! So it can't be a target."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">newtarget</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="o">=</span> <span class="n">newtarget</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the Trainer's current hold out set.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span>
+
+
+    <span class="nd">@validator.setter</span>
+    <span class="k">def</span> <span class="nf">validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newtrainer</span><span class="p">):</span>
+        <span class="sd">'''Set's the Trainer's hold out set.'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newtrainer</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span> <span class="o">=</span> <span class="n">newtrainer</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Returns the Trainer's parent Trainer</span>
+<span class="sd">        that was split to produce the Trainer.'''</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+    <span class="k">def</span> <span class="nf">set_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newparent</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">):</span>
+        <span class="sd">'''Defines the parent Trainer and adds as Child of parent'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newparent</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">newparent</span>
+            <span class="n">ModelTrains</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">newparent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">ModelTrains</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Parent must also be a Trainer object!"</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the current shape of Trainer object's data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span>
+
+
+    <span class="k">def</span> <span class="nf">nulls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns a series of Trainer object's sums of null data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the list column names that require special imputation.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_toimpute</span>
+
+    <span class="nd">@impute.setter</span>
+    <span class="k">def</span> <span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_list</span><span class="p">):</span>
+        <span class="sd">'''Define the features that require imputation modelling'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_list</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">column_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">"{} is not a feature of Trainer object!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"{} has no missing to impute in {}!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_toimpute</span> <span class="o">=</span> <span class="n">column_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Imputation candidates must be a list of column strings."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_missings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__updateMissings</span><span class="p">()</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">imputed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the list column names that have been fit and imputed.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imputed</span>
+
+
+    <span class="nd">@imputed.setter</span>
+    <span class="k">def</span> <span class="nf">imputed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">'''Add feature to a list of imputed features.'''</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"{} is not a feature of Trainer object!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"{} has HAS MISSING DATA STILL to impute in {}!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_imputed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_missings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__updateMissings</span><span class="p">()</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">missings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Return a list columns with missing data that are</span>
+<span class="sd">        not already staged for imputation modelling.'''</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_missings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__updateMissings</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missings</span>
+
+
+    <span class="k">def</span> <span class="nf">__updateMissings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Updates the record of columns with missing values.'''</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">UPDATE {}'s MISSINGS</span><span class="se">\n</span><span class="s">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">has_missings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_features_wmissing</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="n">missings_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">has_missings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute</span><span class="p">:</span>
+                <span class="n">missings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">missings_list</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transformed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Returns the dictionary of transformed</span>
+<span class="sd">        features to their respective transformation features.'''</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span>
+
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Maps the features to the features that are its transformations</span>
+<span class="sd">        in order to identify invalid intercorrelations.'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pair</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">"Adding {} to list of {} transformations {}."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_transformed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">"{} is not a feature of {}."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns a list of Trainer's children Trainer's.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+
+
+    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newchild</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Adds a Child Trainer Object to the Children list.</span>
+<span class="sd">        '''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newchild</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">):</span>
+            <span class="c"># print('\n**{} birthed {}!'.format(self.name, newchild.name))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newchild</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="sd">'''Returns a list of Child Trainer Objects specified by name strings.'''</span>
+        <span class="n">child_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                        <span class="n">child_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                        <span class="n">child_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">child_list</span>
+
+
+    <span class="k">def</span> <span class="nf">__makeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">):</span>
+        <span class="sd">'''Constuctor for initializing Trainer data.'''</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Data must be passed in a dataframe!"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">now</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns a the current Trainer's data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">same</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the number of times the Trainer's data have been rewritten.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span><span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">changes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the number of times the Trainer's data have been rewritten.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span>
+
+
+    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newdataframe</span><span class="p">):</span>
+        <span class="sd">'''Returns a the current Trainer's data.'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newdataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">newdataframe</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">=</span> <span class="n">newdataframe</span>
+
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">swap</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">'''Resets a the current Trainer's data to the last version.'''</span>
+        <span class="k">if</span> <span class="n">swap</span><span class="p">:</span>
+            <span class="n">fast_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span> <span class="o">=</span> <span class="n">fast_forward</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last_version</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="k">def</span> <span class="nf">get_original_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="sd">'''Returns a the Trainer's data as it was first initialized.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data_original</span>
+
+
+    <span class="k">def</span> <span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Returns the attributes of a single trainer object</span>
+<span class="sd">        in the order required to store it as a ModelTrain</span>
+<span class="sd">        in a ModelTrains object.</span>
+<span class="sd">        '''</span>
+        <span class="n">children_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="n">children_names</span> <span class="o">=</span> <span class="n">children_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">parental_object</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">parental_name</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">parental_shape</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span>
+            <span class="n">parental_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+            <span class="n">parental_name</span> <span class="o">=</span> <span class="n">parental_object</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">parental_shape</span> <span class="o">=</span> <span class="n">parental_object</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n\t</span><span class="s">Trainer Name: {}, Shape = {}, ModelTrainIndex Position: {}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Parent Name: {}, Shape = {}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Children = {}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Outcome = {}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Target = {}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Sum of Nulls: </span><span class="se">\n</span><span class="s">{}</span><span class="se">\n\</span>
+<span class="s">              </span><span class="se">\t</span><span class="s">Returning &gt;&gt; Name, Outcome, Target, Parent</span><span class="se">\n</span><span class="s">'</span><span class="o">.</span>\
+              <span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">parental_name</span><span class="p">,</span> <span class="n">parental_shape</span><span class="p">,</span> <span class="n">children_names</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nulls</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">parental_object</span>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">list_features_wmissing</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Return all features that have missing values:</span>
+<span class="sd">            - a list of just those features.'''</span>
+        <span class="c"># print('Summary Statistics on Full Data set:\n{}'.format(dataset.describe(include='all').round(2)))</span>
+        <span class="n">has_null</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'Total_missings'</span> <span class="p">:</span> <span class="n">dataset</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()})</span>
+        <span class="n">has_null</span><span class="p">[(</span><span class="n">has_null</span><span class="o">.</span><span class="n">Total_missings</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n\n</span><span class="s">{} Features with missing values: {}</span><span class="se">\n</span><span class="s">'</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">has_null</span><span class="p">[(</span><span class="n">has_null</span><span class="o">.</span><span class="n">Total_missings</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
+               <span class="n">has_null</span><span class="p">[(</span><span class="n">has_null</span><span class="o">.</span><span class="n">Total_missings</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+        <span class="c"># print(has_null.ix[2:,:])</span>
+        <span class="k">return</span> <span class="n">has_null</span><span class="p">[(</span><span class="n">has_null</span><span class="o">.</span><span class="n">Total_missings</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Print the attributes of the Trainer.'''</span>
+        <span class="n">attribute_list</span> <span class="o">=</span> <span class="s">'name id parent.name outcome target same changes shape impute missings nulls()'</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">attribute_list</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">att</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="s">'{}.{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">'self'</span><span class="p">,</span> <span class="n">att</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="section" id="a-modelling-class">
+<span id="modelling"></span><h2 id="a-modelling-class">A <tt class="docutils literal">Modelling</tt> Class</h2>
+<p>A modelling class, <tt class="docutils literal">ModelTrains</tt>, catalogues all variants of training, testing and validation <tt class="docutils literal">Trainer</tt> objects.  Many subsets are created through the iterative cross-validation steps of a loop of models.  <tt class="docutils literal">ModelTrains</tt> maintains and updates the geneology of these subsets.  Using this portfolio of subsets, we can (re)assign subsets as testing sets of one another dynamically simply by manipulating their relational attributes:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">ModelTrains</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Stores the training and testing matrices of the data directory</span>
+<span class="sd">    and stores the subsets of Trainer data with their respective</span>
+<span class="sd">    best classifier.</span>
+<span class="sd">    '''</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filedir</span><span class="p">,</span> <span class="n">index_of_dependent_variable</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop_column</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">holdout_size</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">task_number</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">DEPENDENT_INDEX</span> <span class="o">=</span> <span class="n">index_of_dependent_variable</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">TITLE</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
+
+        <span class="c"># Private attributes:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__training_labels</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__full_training_data</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__holdout</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s">'{}/training.csv'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filedir</span><span class="p">),</span> <span class="n">to</span><span class="o">=</span><span class="s">'pandas'</span><span class="p">,</span>
+                                  <span class="n">drop_column</span> <span class="o">=</span> <span class="n">drop_column</span><span class="p">,</span>
+                                  <span class="n">holdout_size</span> <span class="o">=</span> <span class="n">holdout_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__testing_labels</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__full_testing_data</span><span class="p">,</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">__testing_holdout</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s">'{}/testing.csv'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filedir</span><span class="p">),</span> <span class="n">to</span><span class="o">=</span><span class="s">'pandas'</span><span class="p">,</span>
+                                              <span class="n">drop_column</span> <span class="o">=</span> <span class="n">drop_column</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_training_y_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">ModelTrains</span><span class="o">.</span><span class="n">DEPENDENT_INDEX</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_testing_y_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">ModelTrains</span><span class="o">.</span><span class="n">DEPENDENT_INDEX</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_trainers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__makeTrainers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_names</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_betas</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_indices</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_r2</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dependent_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the dependent variable's column number.'''</span>
+        <span class="k">return</span> <span class="n">ModelTrains</span><span class="o">.</span><span class="n">DEPENDENT_INDEX</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">training_y_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns dependent array of the training_data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_training_y_values</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">testing_y_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns dependent array of the testing_data.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testing_y_values</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">training_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the arrays of the training data matrix.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">testing_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the arrays of the testing data matrix.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trainers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Lists all the trainer objects of the data.'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="c"># Return a copy so that this list can't be</span>
+            <span class="c"># manipulated via property.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="p">[:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="p">]</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_trainers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the total number of trainers.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_trainers</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''A string of names of the trainers in the current model in memory.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_names</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Lists the column numbers of the trainers in the current model.'''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_indices</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="c"># Return a copy so that this list can't be</span>
+            <span class="c"># manipulated via property.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_indices</span><span class="p">[:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_indices</span><span class="p">]</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the R-squared value of the current model in memory.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_r2</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_betas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''Returns the estimated coefficients of the current model in memory.'''</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_betas</span>
+
+
+    <span class="k">def</span> <span class="nf">__makeTrainers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Initializes Read in Data as Trainer objects:</span>
+<span class="sd">            * a name</span>
+<span class="sd">            * a dataset</span>
+<span class="sd">            * a target</span>
+<span class="sd">            * possibly an analogous testing set</span>
+<span class="sd">        Returns the list of initialized trainer objects.</span>
+<span class="sd">        Trainer(name, dataframe, outcome_name, validator = None, ModelTrainIndex = None)</span>
+<span class="sd">        '''</span>
+        <span class="n">trainer_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># Make Trainer objects from the datasets and store each one.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__full_training_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">outcome_name</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_labels</span><span class="p">[</span><span class="n">ModelTrains</span><span class="o">.</span><span class="n">DEPENDENT_INDEX</span><span class="p">]</span>
+            <span class="n">TRAIN_PARENT</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'TRAIN_PARENT'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__full_training_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">outcome_name</span><span class="p">,</span> <span class="n">ModelTrainIndex</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">))</span>
+            <span class="n">pname</span><span class="p">,</span> <span class="n">poutcome</span><span class="p">,</span> <span class="n">ptarget</span><span class="p">,</span> <span class="n">pparent</span> <span class="o">=</span> <span class="n">TRAIN_PARENT</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+            <span class="n">trainer_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TRAIN_PARENT</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__holdout</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'HOLDOUT'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__holdout</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">outcome_name</span><span class="p">,</span>
+                                     <span class="n">ModelTrainIndex</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">),</span> <span class="n">parent</span><span class="o">=</span><span class="n">TRAIN_PARENT</span><span class="p">)</span>
+                    <span class="n">hname</span><span class="p">,</span> <span class="n">houtcome</span><span class="p">,</span> <span class="n">htarget</span><span class="p">,</span> <span class="n">hparent</span> <span class="o">=</span> <span class="n">HOLDOUT</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+                    <span class="n">trainer_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HOLDOUT</span><span class="p">)</span>
+                    <span class="n">TRAIN</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'TRAIN'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">outcome_name</span><span class="p">,</span>
+                                    <span class="n">validator</span><span class="o">=</span><span class="n">HOLDOUT</span><span class="p">,</span> <span class="n">ModelTrainIndex</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">),</span>
+                                    <span class="n">parent</span><span class="o">=</span><span class="n">TRAIN_PARENT</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">TRAIN</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'TRAIN'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__training_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">outcome_name</span><span class="p">,</span>
+                                    <span class="n">ModelTrainIndex</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">),</span> <span class="n">parent</span><span class="o">=</span><span class="n">TRAIN_PARENT</span><span class="p">)</span>
+                <span class="n">TRAIN_PARENT</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">TRAIN</span><span class="p">)</span>
+                <span class="n">trname</span><span class="p">,</span> <span class="n">troutcome</span><span class="p">,</span> <span class="n">trtarget</span><span class="p">,</span> <span class="n">trparent</span> <span class="o">=</span> <span class="n">TRAIN</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+                <span class="n">trainer_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TRAIN</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">TEST</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'TEST'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__testing_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">outcome_name</span><span class="p">,</span>
+                               <span class="n">ModelTrainIndex</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">),</span> <span class="n">parent</span><span class="o">=</span><span class="n">TRAIN_PARENT</span><span class="p">)</span>
+                <span class="n">TRAIN_PARENT</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">TEST</span><span class="p">)</span>
+                <span class="n">tename</span><span class="p">,</span> <span class="n">teoutcome</span><span class="p">,</span> <span class="n">tetarget</span><span class="p">,</span> <span class="n">teparent</span> <span class="o">=</span> <span class="n">TEST</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+                <span class="n">trainer_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TEST</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trainer_list</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="sd">'''Output helper for printing task header.'''</span>
+        <span class="k">if</span> <span class="n">task</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n</span><span class="s">{} Task {}:"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ModelTrains</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span>
+
+
+    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta_estimates</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">columns_numbers</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Validates and stores the results of a model</span>
+<span class="sd">        as the current model in memory.</span>
+<span class="sd">        '''</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beta_estimates</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_betas</span> <span class="o">=</span> <span class="n">beta_estimates</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Coefficients must be numpy arrays."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_r2</span> <span class="o">=</span> <span class="n">r2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"R2 must be numeric."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns_numbers</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns_numbers</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">model_indices</span> <span class="o">=</span> <span class="n">columns_numbers</span>
+                <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">columns_numbers</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">num</span><span class="p">:</span>
+                            <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                            <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns_numbers</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">model_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns_numbers</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">columns_numbers</span><span class="p">:</span>
+                        <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="k">break</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="s">", "</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_names</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_indices</span> <span class="o">=</span> <span class="n">model_indices</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Column numbers must be int or list of integers."</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_or_trainer_number</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="sd">'''Returns a trainer object from either its name or its trainer_list index number.'''</span>
+        <span class="k">if</span> <span class="n">name_or_trainer_number</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_or_trainer_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name_or_trainer_number</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_or_trainer_number</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="n">name_or_trainer_number</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span><span class="p">[</span><span class="n">count</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Provide a valid trainer name or list number."</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newtrainer</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Adds a new Trainer object to the staging area only if data is different:</span>
+<span class="sd">            * a name</span>
+<span class="sd">            * a dataset</span>
+<span class="sd">            * a target</span>
+<span class="sd">            * possibly an analogous testing set</span>
+<span class="sd">        Returns the list of initialized trainer objects.</span>
+<span class="sd">        '''</span>
+        <span class="n">trainer_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainers</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newtrainer</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trainer_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">newtrainer</span><span class="o">.</span><span class="n">now</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">{} Redundant! {} already contains this data."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">newtrainer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="k">return</span>
+            <span class="n">newtrainer</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trainer_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newtrainer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Print Trainers</span>
+<span class="sd">        '''</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">CURRENT TRAINER OBJECTS'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trainers</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s">'#{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="smart-functions-adapted-for-trainer-and-modeltrains-objects">
+<span id="smart"></span><h2 id="smart-functions-adapted-for-trainer-and-modeltrains-objects">Smart functions adapted for Trainer and ModelTrains objects</h2>
+<ul class="simple">
+<li><a class="reference internal" href="#read"><strong>Read</strong></a></li>
+<li><a class="reference internal" href="#drop"><strong>Remove Missings</strong></a></li>
+<li><a class="reference internal" href="#transform"><strong>Transform</strong></a></li>
+</ul>
+<div class="section" id="a-read-in-function">
+<span id="read"></span><h3 id="a-read-in-function">A Read-in Function</h3>
+<p>The <tt class="docutils literal">Trainer</tt> class enables us a generalizeable function for reading in raw data directly into testing, training and holdout <tt class="docutils literal">Trainer</tt> objects.  <tt class="docutils literal">Trainer</tt> ojects record whether their data is a subsets of another <tt class="docutils literal">Trainer</tt> object so that heritage can be mapped easily:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s">'pandas'</span><span class="p">,</span> <span class="n">holdout_size</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">drop_column</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Read data from the specified file.  Split the lines and convert</span>
+<span class="sd">    float strings into floats.  Assumes the first row contains labels</span>
+<span class="sd">    for the columns.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">      filename: name of the file to be read</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      (list of strings, pandas dataframe)</span>
+<span class="sd">    '''</span>
+
+    <span class="k">if</span> <span class="n">to</span> <span class="o">==</span> <span class="s">'pandas'</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">drop_column</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">drop_column</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">drop_column</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">drop_column</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drop_column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">holdout_size</span><span class="p">:</span>
+            <span class="n">TRAIN</span><span class="p">,</span> <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="n">holdout_size</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">TRAIN</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels</span><span class="p">,</span> <span class="n">TRAIN</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">','</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">holdout_size</span><span class="p">:</span>
+                <span class="n">TRAIN</span><span class="p">,</span> <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="n">holdout_size</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">TRAIN</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">TRAIN</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">HOLDOUT</span>
+</pre></div>
+</div>
+<div class="section" id="handling-missing-values">
+<span id="drop"></span><h3 id="handling-missing-values">Handling Missing Values</h3>
+<p>The following function produces several variants of a single <tt class="docutils literal">Trainer</tt> object as additional <tt class="docutils literal">Trainer</tt>'s, and saves them to <tt class="docutils literal">ModelTrains</tt> by name.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">decode_and_drop_missings</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">decodings_dict</span><span class="p">,</span> <span class="n">except_threshold</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">encode_except</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">'''Inputs:</span>
+<span class="sd">        - Dataframe (Trainer)</span>
+<span class="sd">        - Decoding variables to values dictionary</span>
+<span class="sd">        - Optional discrete_threshold (i.e. 1000 unique values)</span>
+<span class="sd">       Returns 3 Dataframes of missings removal strategies.'''</span>
+    <span class="n">encoded_features</span> <span class="o">=</span> <span class="n">get_encoded_features_list</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                                 <span class="n">except_threshold</span><span class="p">,</span>
+                                                 <span class="n">excepting</span><span class="o">=</span><span class="n">encode_except</span><span class="p">)</span>
+    <span class="n">decodetrainer</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">decodings_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">]:</span>
+            <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded_features</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">encoded_features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">])</span>
+        <span class="n">raw_train</span><span class="p">,</span> <span class="n">imputation_candidates</span> <span class="o">=</span>  <span class="n">decode_extended_to_nan</span><span class="p">(</span><span class="n">decodetrainer</span><span class="p">,</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">],</span>
+                                            <span class="n">to_replace</span> <span class="o">=</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'to_replace'</span><span class="p">],</span>
+                                            <span class="n">values</span> <span class="o">=</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'with_replace'</span><span class="p">])</span>
+
+    <span class="c"># Corrected dataset with all missings in place. Stage as Trainer.</span>
+    <span class="n">Tdecode</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'FULL_MISS'</span><span class="p">,</span> <span class="n">raw_train</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
+    <span class="n">Tdecode</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+    <span class="c"># Derive binary missing indicator variables</span>
+    <span class="n">dropped_train</span> <span class="o">=</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">derived_train</span> <span class="o">=</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">inspect_missing_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">imputation_candidates</span><span class="p">[</span><span class="n">imputation_candidates</span><span class="o">.</span><span class="n">Total_missing</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">feature</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outcome_variable</span><span class="p">:</span>
+            <span class="n">inspect_missing_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+            <span class="n">is_missing_var</span> <span class="o">=</span> <span class="n">feature</span> <span class="o">+</span> <span class="s">'_missing'</span>
+            <span class="n">derived_train</span><span class="p">[</span><span class="n">is_missing_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">derived_train</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="bp">True</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span> <span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+    <span class="n">Tim</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'FULL_ISMISS'</span><span class="p">,</span> <span class="n">derived_train</span><span class="p">,</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
+    <span class="n">Tim</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tim</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c"># Drop all missings</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outcome_variable</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">outcome_variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">outcome_variable</span><span class="p">]</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">Tim</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s">'any'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">Tcol</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'COL_DROP'</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Tim</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
+    <span class="n">Tcol</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tim</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tcol</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">dropped_train</span> <span class="o">=</span>  <span class="n">drop_obs_w_anynan</span><span class="p">(</span><span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">encoded_features</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Trow</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'ROW_DROP'</span><span class="p">,</span> <span class="n">dropped_train</span><span class="p">,</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
+    <span class="n">Trow</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Trow</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ModelTrains</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inspect_missing_list</span>
+</pre></div>
+</div>
+<div class="section" id="variable-transformation">
+<span id="transform"></span><h3 id="variable-transformation">Variable Transformation</h3>
+<p><tt class="docutils literal">gen_transform_data</tt> generates a <tt class="docutils literal">Trainer</tt> object with transformed variables, saving it to <tt class="docutils literal">ModelTrains</tt>.</p>
+<div class="highlight"><pre><span class="c"># Transform Data</span>
+<span class="k">def</span> <span class="nf">gen_transform_data</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">transform_dict</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">'''Inputs:</span>
+<span class="sd">        - Dataset (Trainer)</span>
+<span class="sd">        - dictionary of features to transform with</span>
+<span class="sd">            respective transformation function.'''</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">transformations</span><span class="p">:</span>
+        <span class="n">transformations</span> <span class="o">=</span> <span class="p">{</span><span class="s">'log'</span><span class="p">:</span> <span class="s">'np.log'</span><span class="p">}</span>
+    <span class="n">track_transformations</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">transform_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="n">transform_dict</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+            <span class="n">plus</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">fx</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
+                <span class="n">new_feature</span> <span class="o">=</span> <span class="n">feature</span> <span class="o">+</span> <span class="s">'_'</span> <span class="o">+</span> <span class="n">fx</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">Transforming {} by way of {} = {}'</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">new_feature</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">fx</span> <span class="o">==</span> <span class="s">'log'</span><span class="p">:</span>
+                    <span class="n">plus</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">dataset</span><span class="p">[</span><span class="n">new_feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">transformations</span><span class="p">[</span><span class="n">fx</span><span class="p">])(</span><span class="n">x</span> <span class="o">+</span> <span class="n">plus</span><span class="p">))</span>
+                <span class="n">track_transformations</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_feature</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Provide valid transformation function. {} is invalid."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fx</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">'Transform of {} FAILED on {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">pass</span>
+    <span class="c"># Add new trainer</span>
+    <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">newname</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'_'</span>
+        <span class="k">for</span> <span class="n">transform_command</span> <span class="ow">in</span> <span class="n">transformations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">newname</span> <span class="o">+=</span> <span class="n">transform_command</span>
+        <span class="n">newtrainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">newname</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
+        <span class="n">newtrainer</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
+        <span class="n">newtrainer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">track_transformations</span><span class="p">)</span>
+        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">newtrainer</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ModelTrains</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span>
+</pre></div>
+<p><a class="reference internal" href="#see-how-classes-can-help-to-shape-your-machine-learning-procedure">See how classes can help to shape your machine learning procedure</a></p>
+</div>
+</div>
+
+    </article>
+
+    <hr>
+
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://github.com/rduvoisin">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Blog powered by <a href="http://getpelican.com">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="./theme/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="./theme/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="./theme/js/clean-blog.min.js"></script>
+
+</body>
+
+</html>

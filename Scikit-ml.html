@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+            <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>R.O. Duvi-san</title>
+
+
+        <!-- Bootstrap Core CSS -->
+        <link href="./theme/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="./theme/css/clean-blog.min.css" rel="stylesheet">
+
+        <!-- Code highlight color scheme -->
+            <link href="./theme/css/code_blocks/darkly.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+
+        <meta name="tags" contents="machine learning" />
+        <meta name="tags" contents="code" />
+
+
+			<meta property="og:locale" content="en">
+		<meta property="og:site_name" content="R.O. Duvi-san">
+
+	<meta property="og:type" content="article">
+	<meta property="article:author" content="">
+	<meta property="og:url" content="./Scikit-ml.html">
+	<meta property="og:title" content="give me some credit">
+	<meta property="og:description" content="Predicting delinquency on loans repayment">
+	<meta property="og:image" content="./images/ROC_by_classifier_dark.png">
+	<meta property="article:published_time" content="2016-04-30 05:08:00-05:00">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">R.O. Duvi-san</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+        <header class="intro-header" style="background-image: url('images/ROC_by_classifier_dark.png')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>give me some credit</h1>
+                            <h3 class="subheading">Predicting delinquency on loans repayment</h3>
+                        <span class="meta">Posted by
+                                <a href="./author/rebeccah-duvoisin.html">Rebeccah Duvoisin</a>
+                             on Sat 30 April 2016
+                        </span>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    <!-- Post Content -->
+    <article>
+        <p><a class="reference external" href="./oop-ml.html">See post on OOP tips for data preparation</a></p>
+<p>This open-source ML project is to predict serious delinquency of credit borrowers.</p>
+<p>One strategy is to build a master loop through scikit's library to learn the "best" model. For new learners, this angle some serious pedagogical drawbacks, but it is easily implemented. Here's the gist of the model selection loop to get you familiar with the objective here.  I've called it the <tt class="docutils literal">splitter</tt> function because it splits the training set into cross-validation sets with each iteration of the model.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">splitter</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">models_to_run</span> <span class="o">=</span> <span class="p">[</span><span class="s">'RFR'</span><span class="p">,</span> <span class="s">'DTR'</span><span class="p">,</span> <span class="s">'KNNR'</span><span class="p">,</span> <span class="s">'KNN'</span><span class="p">,</span> <span class="s">'DT'</span><span class="p">,</span> <span class="s">'RF'</span><span class="p">,</span><span class="s">'LR'</span><span class="p">,</span><span class="s">'ET'</span><span class="p">,</span><span class="s">'AB'</span><span class="p">,</span><span class="s">'GB'</span><span class="p">],</span>
+                  <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_features</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">testsize</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">imputation_stats_and_methods</span><span class="o">=</span><span class="p">{},</span>
+                  <span class="n">results_dataframe</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">regress_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s">'roc_auc_score'</span><span class="p">,</span>
+                  <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">precise</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">recall</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="n">split_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">'X_train'</span><span class="p">,</span> <span class="s">'X_test'</span><span class="p">]</span>
+
+    <span class="n">clfs</span> <span class="o">=</span> <span class="p">{</span><span class="s">'RF'</span><span class="p">:</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s">'RFR'</span><span class="p">:</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s">'ET'</span><span class="p">:</span> <span class="n">ExtraTreesClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s">'entropy'</span><span class="p">),</span>
+        <span class="s">'AB'</span><span class="p">:</span> <span class="n">AdaBoostClassifier</span><span class="p">(</span><span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">algorithm</span><span class="o">=</span><span class="s">"SAMME"</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
+        <span class="s">'LR'</span><span class="p">:</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s">'l1'</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1e5</span><span class="p">),</span>
+        <span class="s">'SVM'</span><span class="p">:</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s">'linear'</span><span class="p">,</span> <span class="n">probability</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s">'GB'</span><span class="p">:</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="s">'NB'</span><span class="p">:</span> <span class="n">GaussianNB</span><span class="p">(),</span>
+        <span class="s">'DT'</span><span class="p">:</span> <span class="n">DecisionTreeClassifier</span><span class="p">(),</span>
+        <span class="s">'DTR'</span><span class="p">:</span> <span class="n">DecisionTreeRegressor</span><span class="p">(),</span>
+        <span class="s">'SGD'</span><span class="p">:</span> <span class="n">SGDClassifier</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">"hinge"</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s">"l2"</span><span class="p">),</span>
+        <span class="s">'KNN'</span><span class="p">:</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+        <span class="s">'KNNR'</span><span class="p">:</span> <span class="n">KNeighborsRegressor</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="p">}</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'RF'</span><span class="p">:</span> <span class="p">{</span><span class="s">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,],</span> <span class="s">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="s">'max_features'</span><span class="p">:</span> <span class="p">[</span><span class="s">'sqrt'</span><span class="p">,</span><span class="s">'log2'</span><span class="p">],</span><span class="s">'min_samples_split'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">]},</span>
+    <span class="s">'RFR'</span><span class="p">:</span> <span class="p">{</span><span class="s">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],</span> <span class="s">'min_samples_split'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span>
+    <span class="s">'DTR'</span> <span class="p">:</span> <span class="p">{</span><span class="s">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="s">'min_samples_split'</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]},</span>
+    <span class="s">'LR'</span><span class="p">:</span> <span class="p">{</span><span class="s">'penalty'</span><span class="p">:</span> <span class="p">[</span><span class="s">'l1'</span><span class="p">,</span><span class="s">'l2'</span><span class="p">],</span> <span class="s">'C'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00001</span><span class="p">,</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">]},</span>
+    <span class="s">'SGD'</span><span class="p">:</span> <span class="p">{</span> <span class="s">'loss'</span><span class="p">:</span> <span class="p">[</span><span class="s">'hinge'</span><span class="p">,</span><span class="s">'log'</span><span class="p">,</span><span class="s">'perceptron'</span><span class="p">],</span> <span class="s">'penalty'</span><span class="p">:</span> <span class="p">[</span><span class="s">'l2'</span><span class="p">,</span><span class="s">'l1'</span><span class="p">,</span><span class="s">'elasticnet'</span><span class="p">]},</span>
+    <span class="s">'ET'</span><span class="p">:</span> <span class="p">{</span> <span class="s">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],</span> <span class="s">'criterion'</span> <span class="p">:</span> <span class="p">[</span><span class="s">'gini'</span><span class="p">,</span> <span class="s">'entropy'</span><span class="p">]</span> <span class="p">,</span><span class="s">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="s">'max_features'</span><span class="p">:</span> <span class="p">[</span><span class="s">'sqrt'</span><span class="p">,</span><span class="s">'log2'</span><span class="p">],</span><span class="s">'min_samples_split'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">]},</span>
+    <span class="s">'AB'</span><span class="p">:</span> <span class="p">{</span> <span class="s">'algorithm'</span><span class="p">:</span> <span class="p">[</span><span class="s">'SAMME'</span><span class="p">,</span> <span class="s">'SAMME.R'</span><span class="p">],</span> <span class="s">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10000</span><span class="p">]},</span>
+    <span class="s">'GB'</span><span class="p">:</span> <span class="p">{</span><span class="s">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],</span> <span class="s">'learning_rate'</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span><span class="s">'subsample'</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">]},</span>
+    <span class="s">'NB'</span> <span class="p">:</span> <span class="p">{},</span>
+    <span class="s">'DT'</span><span class="p">:</span> <span class="p">{</span><span class="s">'criterion'</span><span class="p">:</span> <span class="p">[</span><span class="s">'gini'</span><span class="p">,</span> <span class="s">'entropy'</span><span class="p">],</span> <span class="s">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="s">'max_features'</span><span class="p">:</span> <span class="p">[</span><span class="s">'sqrt'</span><span class="p">,</span><span class="s">'log2'</span><span class="p">],</span><span class="s">'min_samples_split'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">]},</span>
+    <span class="s">'SVM'</span> <span class="p">:{</span><span class="s">'C'</span> <span class="p">:[</span><span class="mf">0.00001</span><span class="p">,</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span><span class="s">'kernel'</span><span class="p">:[</span><span class="s">'linear'</span><span class="p">]},</span>
+    <span class="s">'KNN'</span> <span class="p">:{</span><span class="s">'n_neighbors'</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span><span class="s">'weights'</span><span class="p">:</span> <span class="p">[</span><span class="s">'uniform'</span><span class="p">,</span><span class="s">'distance'</span><span class="p">],</span><span class="s">'algorithm'</span><span class="p">:</span> <span class="p">[</span><span class="s">'ball_tree'</span><span class="p">,</span><span class="s">'kd_tree'</span><span class="p">]},</span>
+    <span class="s">'KNNR'</span> <span class="p">:</span> <span class="p">{</span><span class="s">'n_neighbors'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="s">'weights'</span><span class="p">:</span> <span class="p">[</span><span class="s">'uniform'</span><span class="p">,</span> <span class="s">'distance'</span><span class="p">],</span> <span class="s">'algorithm'</span><span class="p">:</span> <span class="p">[</span><span class="s">'auto'</span><span class="p">,</span><span class="s">'ball_tree'</span><span class="p">,</span><span class="s">'kd_tree'</span><span class="p">]}</span>
+           <span class="p">}</span>
+</pre></div>
+<div class="highlight"><pre>    <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">XVal</span><span class="o">.</span><span class="n">now</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">XVal</span><span class="o">.</span><span class="n">now</span><span class="p">[</span><span class="n">XVal</span><span class="o">.</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">' START LOOP XTRAIN INFO</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="n">XTrain</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
+
+    <span class="c"># Now run thru the loop to get the best clfs.</span>
+
+    <span class="n">regexregress</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r"(\w+)Regressor"</span><span class="p">)</span>
+    <span class="n">model_number</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">clf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">clfs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">models_to_run</span><span class="p">]):</span>
+        <span class="n">model_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">models_to_run</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        <span class="c"># Initialize a model dictionary</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">parameter_values</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="n">models_to_run</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">Parameter Values'</span><span class="p">,</span> <span class="n">parameter_values</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">ParameterGrid(parameter_values)'</span><span class="p">,</span> <span class="n">ParameterGrid</span><span class="p">(</span><span class="n">parameter_values</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ParameterGrid</span><span class="p">(</span><span class="n">parameter_values</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">clf</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">'clf'</span><span class="p">,</span> <span class="n">clf</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">learner</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="n">imputation_statistics</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">imputer_estimator</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="s">'NaN'</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">'median'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">imputer_estimator</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+            <span class="n">imputation_statistics</span> <span class="o">=</span> <span class="n">imputer_estimator</span><span class="o">.</span><span class="n">statistics_</span>
+
+            <span class="c"># Modify any remaining missing variables to their medians and Fit.</span>
+</pre></div>
+<div class="highlight"><pre>            <span class="n">model_dict</span><span class="p">[</span><span class="s">'imputation_statistics'</span><span class="p">]</span> <span class="o">=</span> <span class="n">imputation_statistics</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Y_outcome'</span><span class="p">]</span> <span class="o">=</span> <span class="n">outcome_variable</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Trainer Parent'</span><span class="p">]</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Trainer'</span><span class="p">]</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Training_set'</span><span class="p">]</span> <span class="o">=</span> <span class="n">XTrain</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Testing_set'</span><span class="p">]</span> <span class="o">=</span> <span class="n">XVal</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Test_size'</span><span class="p">]</span> <span class="o">=</span> <span class="n">testsize</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'Predictors'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cols</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'best_score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">best</span><span class="p">[</span><span class="s">'best_score'</span><span class="p">]</span>
+
+            <span class="c"># Track Model's Parameters</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">model_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+            <span class="c"># Predict the output on the validation</span>
+            <span class="n">predicted</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+            <span class="n">mse</span> <span class="o">=</span> <span class="n">get_mse</span><span class="p">(</span><span class="n">predicted</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'metric_score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse</span>
+</pre></div>
+<div class="highlight"><pre>            <span class="n">probs</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+<div class="highlight"><pre>            <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
+            <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+            <span class="n">model_dict</span><span class="p">[</span><span class="s">'roc_auc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc</span>
+
+            <span class="c"># Save model_dict values to results matrix.</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">model_dict</span><span class="p">:</span>
+                <span class="c"># Check if new keys need to be added to the results_dataframe first:</span>
+                <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">results_dataframe</span><span class="p">:</span>
+                    <span class="c"># Save key to results_dataframe</span>
+                    <span class="n">results_dataframe</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="c"># Fill results_dataframe new key up to this model number</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model_number</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_dataframe</span><span class="p">[</span><span class="n">element</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">results_dataframe</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">results_dataframe</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_dict</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
+
+            <span class="c"># SWEEP up leftover keys.</span>
+            <span class="c"># Add unused model_dict values to the model_dict and add them back in.</span>
+            <span class="k">for</span> <span class="n">unused_k</span> <span class="ow">in</span> <span class="n">results_dataframe</span><span class="p">:</span>
+                <span class="c"># Save unused key to model_dict</span>
+                <span class="k">if</span> <span class="n">unused_k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_dict</span><span class="p">:</span>
+                    <span class="n">model_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_dataframe</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">model_dict</span><span class="p">[</span><span class="s">'Model'</span><span class="p">]:</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results_dataframe</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">write_to</span><span class="p">)</span>
+</pre></div>
+<p>At each improvement of the evaluation metric, a new "best" model is saved. See <a class="reference internal" href="#bestmodel"><tt class="docutils literal">replace_best_model</tt></a> function.</p>
+<div class="highlight"><pre>            <span class="k">if</span> <span class="n">model_dict</span><span class="p">[</span><span class="s">'roc_auc'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">[</span><span class="s">'roc_auc'</span><span class="p">]:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">****</span><span class="se">\t</span><span class="s">MODEL UPDATE</span><span class="se">\t</span><span class="s">*****:'</span><span class="p">)</span>
+                <span class="n">best</span> <span class="o">=</span> <span class="n">replace_best_model</span><span class="p">(</span><span class="n">trainer</span><span class="o">=</span><span class="n">trainer</span><span class="p">,</span> <span class="n">best</span><span class="o">=</span><span class="n">best</span><span class="p">,</span>
+                                          <span class="n">model_dict</span><span class="o">=</span><span class="n">model_dict</span><span class="p">,</span>
+                                          <span class="n">estimator</span><span class="o">=</span><span class="n">estimator</span><span class="p">,</span>
+                                          <span class="n">parameters</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+                                          <span class="n">X_train</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="o">=</span><span class="n">X_test</span><span class="p">,</span>
+                                          <span class="n">y_train</span><span class="o">=</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span>
+                                          <span class="n">model_number</span><span class="o">=</span><span class="n">model_number</span><span class="p">,</span>
+                                          <span class="n">outcome_variable</span><span class="o">=</span><span class="n">outcome_variable</span><span class="p">,</span> <span class="n">holdout</span><span class="o">=</span><span class="n">XVal</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                          <span class="n">learner</span><span class="o">=</span><span class="n">learner</span><span class="p">,</span> <span class="n">imputation_statistics</span> <span class="o">=</span> <span class="n">imputation_statistics</span><span class="p">,</span>
+                                          <span class="n">metric</span><span class="o">=</span><span class="s">'roc_auc'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n\t</span><span class="s">BEST MODEL!:</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">best</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">best</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">best</span><span class="p">[</span><span class="s">'Estimator'</span><span class="p">],</span> <span class="n">best</span><span class="p">[</span><span class="s">'PARAMETERS'</span><span class="p">],</span> <span class="n">cols</span><span class="p">,</span> <span class="n">imputation_stats_and_methods</span><span class="p">,</span> <span class="n">best</span>
+</pre></div>
+<p>With each new "best" model, we take several snapshots of the model's performance, using the <a class="reference internal" href="#bestmodel"><tt class="docutils literal">replace_best_model</tt></a> function.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#feature-importance"><strong>Feature Impotance</strong></a></li>
+<li><a class="reference internal" href="#precision"><strong>Precision-Recall</strong></a></li>
+<li><a class="reference internal" href="#roc-by-classifier"><strong>ROC Curves</strong></a></li>
+</ul>
+<div class="figure align-right" id="feature-importance">
+<img alt="feat_importance" src="./images/HOLDOUT_MISS_log_Final_Validation_RandomForestClassifier_feat_importance.png" style="height: 600.0px;"/>
+<p class="caption">Feature importance of a RandomForest Classifier model.</p>
+</div>
+<!-- `precision`_ -->
+<div class="figure align-right" id="precision">
+<img alt="precision_recall" src="./images/HOLDOUT_MISS_log_Final_Validation_RandomForestClassifier_precision_recall_at_5.png" style="height: 400.0px;"/>
+<p class="caption">Precision and recall curves by population percentage.</p>
+</div>
+<p>Lastly, <a class="reference internal" href="#bestmodel"><tt class="docutils literal">replace_best_model</tt></a> also stores the best learned model for each classifier tested so that we can compare their relative performances.</p>
+<!-- `roc_by_classifier`_ -->
+<div class="figure align-right" id="roc-by-classifier">
+<img alt="roc_curves" src="./images/ROC_by_classifier.png" style="height: 800.0px;"/>
+<p class="caption">ROC curves by classifier.</p>
+</div>
+<div class="section" id="selected-model-s">
+<span id="bestmodel"></span><h2 id="selected-models">Selected Model(s)</h2>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">replace_best_model</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">best</span><span class="p">,</span> <span class="n">model_dict</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+                       <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">imputation_statistics</span><span class="p">,</span>
+                       <span class="n">model_number</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span>
+                       <span class="n">learner</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">'''Sets the best model so far.'''</span>
+    <span class="k">if</span> <span class="n">model_dict</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">[</span><span class="n">metric</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">best</span><span class="p">:</span>
+            <span class="n">best</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">path_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">trainer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="p">]</span>
+        <span class="n">apath</span> <span class="o">=</span> <span class="s">''</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">:</span>
+            <span class="n">apath</span> <span class="o">=</span> <span class="n">apath</span> <span class="o">+</span> <span class="s">'/{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">apath</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">apath</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'model_dict'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">best</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_dict</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'Classifier'</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_dict</span><span class="p">[</span><span class="s">'Classifier'</span><span class="p">]</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'Estimator'</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'Imputations'</span><span class="p">]</span> <span class="o">=</span> <span class="n">imputation_statistics</span>
+
+        <span class="k">for</span> <span class="n">better_result</span> <span class="ow">in</span> <span class="n">model_dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">better_result</span> <span class="o">!=</span> <span class="s">'Model'</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">better_result</span><span class="p">,</span> <span class="n">model_dict</span><span class="p">[</span><span class="n">better_result</span><span class="p">])</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'model_dict'</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">best</span><span class="p">[</span><span class="s">'PARAMETERS'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">importances</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">feature_importances_</span>
+            <span class="n">sorted_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.5</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s">'all'</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="s">'Model {} Imputed {} by {}:</span><span class="se">\n</span><span class="s">Variable Importances'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_number</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="p">,</span> <span class="n">learner</span><span class="p">)</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="s">'{}_{}_{}_feat_importance.png'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outcome_variable</span> <span class="o">+</span> <span class="s">"/"</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="n">model_number</span><span class="p">,</span> <span class="n">learner</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">importances</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">align</span><span class="o">=</span><span class="s">'center'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">"Relative Importance"</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">'Clf has no feature_importances_ attribute:'</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="o">.</span><span class="mo">05</span>
+        <span class="n">k_format</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">precision_at_k</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="s">'Precision at {} = {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="s">'{}_{}_{}_precision_recall_at_{}.png'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model_number</span><span class="p">,</span> <span class="n">learner</span><span class="p">,</span> <span class="n">k_format</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s">'Model {} Precision-Recall of {} by {}</span><span class="se">\n</span><span class="s">{}:'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_number</span><span class="p">,</span>
+                                                            <span class="n">outcome_variable</span><span class="p">,</span> <span class="n">learner</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="n">plot_precision_recall_n</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s">'Model {} ROC of {} by {}:'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_number</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="p">,</span> <span class="n">learner</span><span class="p">)</span>
+        <span class="n">plot_roc</span><span class="p">(</span><span class="n">holdout</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="p">)</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">set_best</span><span class="p">(</span><span class="n">best</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">best</span>
+</pre></div>
+</div>
+
+    </article>
+
+    <hr>
+
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://github.com/rduvoisin">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Blog powered by <a href="http://getpelican.com">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="./theme/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="./theme/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="./theme/js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
