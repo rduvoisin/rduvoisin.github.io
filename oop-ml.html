@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Doo /fwä /zAn</title>
+        <title>/Doo fwä ẓän/</title>
 
 
         <!-- Bootstrap Core CSS -->
@@ -40,7 +40,7 @@
 
 
 			<meta property="og:locale" content="en">
-		<meta property="og:site_name" content="Doo /fwä /zAn">
+		<meta property="og:site_name" content="/Doo fwä ẓän/">
 
 	<meta property="og:type" content="article">
 	<meta property="article:author" content="">
@@ -48,7 +48,7 @@
 	<meta property="og:title" content="you down with oop?">
 	<meta property="og:description" content="you know me!">
 	<meta property="og:image" content="./images/matrix_FULL_MISS_4_crop_dark.png">
-	<meta property="article:published_time" content="2016-04-15 05:08:00-05:00">
+	<meta property="article:published_time" content="2016-04-01 05:08:00-05:00">
 </head>
 
 <body>
@@ -64,7 +64,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="./">Doo /fwä /zAn</a>
+                <a class="navbar-brand" href="./">/Doo fwä ẓän/</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -88,7 +88,7 @@
                             <h3 class="subheading">you know me!</h3>
                         <span class="meta">Posted by
                                 <a href="./author/rebeccah-duvoisin.html">Rebeccah Duvoisin</a>
-                             on Fri 15 April 2016
+                             on Fri 01 April 2016
                         </span>
                         
                     </div>
@@ -103,26 +103,25 @@
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
     <!-- Post Content -->
     <article>
-        <div class="section" id="see-how-classes-can-help-to-shape-your-machine-learning-procedure">
-<h2 id="see-how-classes-can-help-to-shape-your-machine-learning-procedure">See how classes can help to shape your machine learning procedure</h2>
+        <div class="section" id="classes-can-help-to-shape-your-machine-learning-procedure">
+<h2 id="classes-can-help-to-shape-your-machine-learning-procedure">Classes can help to shape your machine learning procedure</h2>
 <ul class="simple">
 <li><a class="reference internal" href="#trainer"><strong>Trainer</strong></a></li>
-<li><a class="reference internal" href="#modelling"><strong>Modelling</strong></a></li>
-<li><a class="reference internal" href="#smart"><strong>Smarter Functions</strong></a> for data preparation</li>
+<li><a class="reference internal" href="#modeling"><strong>ModelTrains</strong></a></li>
+<li><a class="reference internal" href="#smart"><strong>Smarter functions</strong></a></li>
 </ul>
 <p>Machine Learning projects typically require iterating through numerous subsets of your data in order to cross-validate models on training and testing data.  Python's <a class="reference external" href="http://Scikit-learn.org/stable/">Scikit-Learn</a>'s library allows users to push their data through a loop of out-of-the-box models for selection quite easily.</p>
 <blockquote>
-However, documenting the creation and evaluation of these subsets within that loop can be dizzying, particularly where preprocessing and multiple imputation are necessary and depend on the completeness of the given subset.</blockquote>
-<p>Therefore, while your results may (not) be clear <em>at the end</em>, dynamic documention of analyses on these interim subsets <em>during</em> the loop often requires heavy lifting in the modelling loop and overly complicates the code.</p>
+Documenting the creation and evaluation of these subsets within that loop can be dizzying, particularly where preprocessing and multiple imputation are necessary and depend on the completeness of the given subset.</blockquote>
+<p>Therefore, while your results may (not) be clear <em>at the end</em>, dynamic documention of analyses on these interim subsets <em>during</em> the loop often requires heavy lifting in the modeling loop and overly complicates the code.</p>
+</div>
 <div class="section" id="write-objects-to-envelope-your-data-raw-meta-and-learned">
-<h3 id="write-objects-to-envelope-your-data-raw-meta-and-learned">Write objects to envelope your data (raw, meta, and learned)</h3>
-<p>The code below exemplifies a suite of classes to envelope data into robust objects, namely, <a class="reference internal" href="#trainer"><strong>Trainer</strong></a>  and <a class="reference internal" href="#modelling"><strong>Modelling</strong></a>  classes so that it can extracted at the appropriate points of the model selection loop.</p>
-</div>
-</div>
-<div class="section" id="a-trainer-class">
-<span id="trainer"></span><h2 id="a-trainer-class_1">A <tt class="docutils literal">Trainer</tt> Class</h2>
+<h2 id="write-objects-to-envelope-your-data-raw-meta-and-learned">Write objects to envelope your data (raw, meta, and learned)</h2>
+<p>The code below exemplifies a suite of classes to envelope data into robust objects, namely, <a class="reference internal" href="#trainer"><strong>Trainer</strong></a>  and <a class="reference internal" href="#modeling"><strong>ModelTrains</strong></a>  classes so that it can extracted at the appropriate points of the model selection loop.</p>
+<div class="section" id="trainer-class">
+<span id="trainer"></span><h3 id="trainer-class"><tt class="docutils literal">Trainer</tt> Class</h3>
 <p>Having a class dedicated to storing important metadata about your dataset can facilitate looping through models.  This <tt class="docutils literal">Trainer</tt> object is a wrapper for a Pandas Dataframe.</p>
-<p>It holds attributes about a testing, training or holdout set.  A <tt class="docutils literal">Trainer</tt> object not only holds the dataset in a dataframe, it also holds the dataset's metadata, telling us which varaible is the outcome variable to classify, and which variables require imputation.  This enables us to dynamically query the metadata to determine which preprocessing steps must be taken to prepare a given dataset for modelling:</p>
+<p>It holds attributes about a testing, training or holdout set.  A <tt class="docutils literal">Trainer</tt> object not only holds the dataset in a dataframe, it also holds the dataset's metadata, telling us which varaible is the outcome variable to classify, and which variables require imputation.  This enables us to dynamically query the metadata to determine which preprocessing steps must be taken to prepare a given dataset for modeling:</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Trainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Initializes a dataset as a trainer object, which contains:</span>
@@ -476,9 +475,9 @@ However, documenting the creation and evaluation of these subsets within that lo
             <span class="k">print</span><span class="p">(</span><span class="n">att</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="s">'{}.{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">'self'</span><span class="p">,</span> <span class="n">att</span><span class="p">)))</span>
 </pre></div>
 </div>
-<div class="section" id="a-modelling-class">
-<span id="modelling"></span><h2 id="a-modelling-class">A <tt class="docutils literal">Modelling</tt> Class</h2>
-<p>A modelling class, <tt class="docutils literal">ModelTrains</tt>, catalogues all variants of training, testing and validation <tt class="docutils literal">Trainer</tt> objects.  Many subsets are created through the iterative cross-validation steps of a loop of models.  <tt class="docutils literal">ModelTrains</tt> maintains and updates the geneology of these subsets.  Using this portfolio of subsets, we can (re)assign subsets as testing sets of one another dynamically simply by manipulating their relational attributes:</p>
+<div class="section" id="modeling-class">
+<span id="modeling"></span><h3 id="modeling-class"><tt class="docutils literal">Modeling</tt> Class</h3>
+<p>A modeling class, <tt class="docutils literal">ModelTrains</tt>, catalogues all variants of training, testing and validation <tt class="docutils literal">Trainer</tt> objects.  Many subsets are created through the iterative cross-validation steps of a loop of models.  <tt class="docutils literal">ModelTrains</tt> maintains and updates the geneology of these subsets.  Using this portfolio of subsets, we can (re)assign subsets as testing sets of one another dynamically simply by manipulating their relational attributes:</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">ModelTrains</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Stores the training and testing matrices of the data directory</span>
@@ -715,16 +714,15 @@ However, documenting the creation and evaluation of these subsets within that lo
             <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s">'#{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="section" id="smart-functions-adapted-for-trainer-and-modeltrains-objects">
-<span id="smart"></span><h2 id="smart-functions-adapted-for-trainer-and-modeltrains-objects">Smart functions adapted for Trainer and ModelTrains objects</h2>
-<ul class="simple">
-<li><a class="reference internal" href="#read"><strong>Read</strong></a></li>
-<li><a class="reference internal" href="#drop"><strong>Remove Missings</strong></a></li>
-<li><a class="reference internal" href="#transform"><strong>Transform</strong></a></li>
-</ul>
-<div class="section" id="a-read-in-function">
-<span id="read"></span><h3 id="a-read-in-function">A Read-in Function</h3>
-<p>The <tt class="docutils literal">Trainer</tt> class enables us a generalizeable function for reading in raw data directly into testing, training and holdout <tt class="docutils literal">Trainer</tt> objects.  <tt class="docutils literal">Trainer</tt> ojects record whether their data is a subsets of another <tt class="docutils literal">Trainer</tt> object so that heritage can be mapped easily:</p>
+</div>
+<div class="section" id="adapt-functions-for-trainer-and-modeltrains-objects">
+<span id="smart"></span><h2 id="adapt-functions-for-trainer-and-modeltrains-objects_1">Adapt functions for Trainer and ModelTrains objects</h2>
+<!-- - |Read|_ -->
+<!-- - |drop|_ -->
+<!-- - |transform|_ -->
+<div class="section" id="read-in-function">
+<span id="read"></span><h3 id="read-in-function">Read-in Function</h3>
+<p>The <tt class="docutils literal">Trainer</tt> class enables us a generalizeable function for reading in raw data directly into testing, training and holdout data sets - all as <tt class="docutils literal">Trainer</tt> objects.  <tt class="docutils literal">Trainer</tt> ojects record whether their data is a subsets of another <tt class="docutils literal">Trainer</tt> object so that heritage can be easily retraced:</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s">'pandas'</span><span class="p">,</span> <span class="n">holdout_size</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">drop_column</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Read data from the specified file.  Split the lines and convert</span>
@@ -762,125 +760,28 @@ However, documenting the creation and evaluation of these subsets within that lo
                 <span class="n">HOLDOUT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">TRAIN</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">HOLDOUT</span>
 </pre></div>
-</div>
-<div class="section" id="handling-missing-values">
-<span id="drop"></span><h3 id="handling-missing-values">Handling Missing Values</h3>
-<p>The following function produces several variants of a single <tt class="docutils literal">Trainer</tt> object as additional <tt class="docutils literal">Trainer</tt>'s, and saves them to <tt class="docutils literal">ModelTrains</tt> by name.</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">decode_and_drop_missings</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">decodings_dict</span><span class="p">,</span> <span class="n">except_threshold</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">encode_except</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">outcome_variable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">'''Inputs:</span>
-<span class="sd">        - Dataframe (Trainer)</span>
-<span class="sd">        - Decoding variables to values dictionary</span>
-<span class="sd">        - Optional discrete_threshold (i.e. 1000 unique values)</span>
-<span class="sd">       Returns 3 Dataframes of missings removal strategies.'''</span>
-    <span class="n">encoded_features</span> <span class="o">=</span> <span class="n">get_encoded_features_list</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                                                 <span class="n">except_threshold</span><span class="p">,</span>
-                                                 <span class="n">excepting</span><span class="o">=</span><span class="n">encode_except</span><span class="p">)</span>
-    <span class="n">decodetrainer</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">decodings_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">]:</span>
-            <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded_features</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">encoded_features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">])</span>
-        <span class="n">raw_train</span><span class="p">,</span> <span class="n">imputation_candidates</span> <span class="o">=</span>  <span class="n">decode_extended_to_nan</span><span class="p">(</span><span class="n">decodetrainer</span><span class="p">,</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'on'</span><span class="p">],</span>
-                                            <span class="n">to_replace</span> <span class="o">=</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'to_replace'</span><span class="p">],</span>
-                                            <span class="n">values</span> <span class="o">=</span> <span class="n">decodings_dict</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">'with_replace'</span><span class="p">])</span>
-
-    <span class="c"># Corrected dataset with all missings in place. Stage as Trainer.</span>
-    <span class="n">Tdecode</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'FULL_MISS'</span><span class="p">,</span> <span class="n">raw_train</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
-    <span class="n">Tdecode</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-
-    <span class="c"># Derive binary missing indicator variables</span>
-    <span class="n">dropped_train</span> <span class="o">=</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">derived_train</span> <span class="o">=</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">inspect_missing_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">imputation_candidates</span><span class="p">[</span><span class="n">imputation_candidates</span><span class="o">.</span><span class="n">Total_missing</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">feature</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outcome_variable</span><span class="p">:</span>
-            <span class="n">inspect_missing_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">feature</span><span class="p">]</span>
-            <span class="n">is_missing_var</span> <span class="o">=</span> <span class="n">feature</span> <span class="o">+</span> <span class="s">'_missing'</span>
-            <span class="n">derived_train</span><span class="p">[</span><span class="n">is_missing_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">derived_train</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="bp">True</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span> <span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
-    <span class="n">Tim</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'FULL_ISMISS'</span><span class="p">,</span> <span class="n">derived_train</span><span class="p">,</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
-    <span class="n">Tim</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tim</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="c"># Drop all missings</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outcome_variable</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">outcome_variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">outcome_variable</span><span class="p">]</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">Tim</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s">'any'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">Tcol</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'COL_DROP'</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Tim</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
-    <span class="n">Tcol</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tim</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Tcol</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="n">dropped_train</span> <span class="o">=</span>  <span class="n">drop_obs_w_anynan</span><span class="p">(</span><span class="n">Tdecode</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">encoded_features</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">Trow</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="s">'ROW_DROP'</span><span class="p">,</span> <span class="n">dropped_train</span><span class="p">,</span> <span class="n">Tdecode</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
-    <span class="n">Trow</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">Tdecode</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Trow</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ModelTrains</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">inspect_missing_list</span>
-</pre></div>
-</div>
-<div class="section" id="variable-transformation">
-<span id="transform"></span><h3 id="variable-transformation">Variable Transformation</h3>
-<p><tt class="docutils literal">gen_transform_data</tt> generates a <tt class="docutils literal">Trainer</tt> object with transformed variables, saving it to <tt class="docutils literal">ModelTrains</tt>.</p>
-<div class="highlight"><pre><span class="c"># Transform Data</span>
-<span class="k">def</span> <span class="nf">gen_transform_data</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">transform_dict</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">'''Inputs:</span>
-<span class="sd">        - Dataset (Trainer)</span>
-<span class="sd">        - dictionary of features to transform with</span>
-<span class="sd">            respective transformation function.'''</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">transformations</span><span class="p">:</span>
-        <span class="n">transformations</span> <span class="o">=</span> <span class="p">{</span><span class="s">'log'</span><span class="p">:</span> <span class="s">'np.log'</span><span class="p">}</span>
-    <span class="n">track_transformations</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">transform_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">fx</span> <span class="o">=</span> <span class="n">transform_dict</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span>
-            <span class="n">plus</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">fx</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
-                <span class="n">new_feature</span> <span class="o">=</span> <span class="n">feature</span> <span class="o">+</span> <span class="s">'_'</span> <span class="o">+</span> <span class="n">fx</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">Transforming {} by way of {} = {}'</span>
-                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">new_feature</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">fx</span> <span class="o">==</span> <span class="s">'log'</span><span class="p">:</span>
-                    <span class="n">plus</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="n">dataset</span><span class="p">[</span><span class="n">new_feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">transformations</span><span class="p">[</span><span class="n">fx</span><span class="p">])(</span><span class="n">x</span> <span class="o">+</span> <span class="n">plus</span><span class="p">))</span>
-                <span class="n">track_transformations</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_feature</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">"Provide valid transformation function. {} is invalid."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fx</span><span class="p">))</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">'Transform of {} FAILED on {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-            <span class="k">pass</span>
-    <span class="c"># Add new trainer</span>
-    <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
-        <span class="k">return</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">newname</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'_'</span>
-        <span class="k">for</span> <span class="n">transform_command</span> <span class="ow">in</span> <span class="n">transformations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">newname</span> <span class="o">+=</span> <span class="n">transform_command</span>
-        <span class="n">newtrainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">newname</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">outcome</span><span class="p">)</span>
-        <span class="n">newtrainer</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">)</span>
-        <span class="n">newtrainer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">track_transformations</span><span class="p">)</span>
-        <span class="n">ModelTrains</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">newtrainer</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ModelTrains</span><span class="o">.</span><span class="n">trainers</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-    <span class="k">return</span>
-</pre></div>
-<p><a class="reference internal" href="#see-how-classes-can-help-to-shape-your-machine-learning-procedure">See how classes can help to shape your machine learning procedure</a></p>
+<!-- .. |drop| replace:: **Remove Missings** -->
+<!-- .. _drop: -->
+<!-- Handling Missing Values -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- The following function produces several variants of a single ``Trainer`` object as additional ``Trainer``'s, and saves them to ``ModelTrains`` by name. -->
+<!-- .. code-include:: ../../cappml/pa3/mlpipeline_pa3.py -->
+<!-- :lexer: python -->
+<!-- :encoding: utf-8 -->
+<!-- :tab-width: 4 -->
+<!-- :start-line: 184 -->
+<!-- :end-line: 252 -->
+<!-- .. |transform| replace:: **Transform** -->
+<!-- .. _transform: -->
+<!-- Variable Transformation -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- ``gen_transform_data`` generates a ``Trainer`` object with transformed variables, saving it to ``ModelTrains``. -->
+<!-- .. code-include:: ../../cappml/pa3/mlpipeline_pa3.py -->
+<!-- :lexer: python -->
+<!-- :encoding: utf-8 -->
+<!-- :tab-width: 4 -->
+<!-- :start-line: 254 -->
+<!-- :end-line: 296 -->
 </div>
 </div>
 

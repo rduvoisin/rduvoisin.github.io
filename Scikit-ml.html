@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Doo /fwä /zAn</title>
+        <title>/Doo fwä ẓän/</title>
 
 
         <!-- Bootstrap Core CSS -->
@@ -40,7 +40,7 @@
 
 
 			<meta property="og:locale" content="en">
-		<meta property="og:site_name" content="Doo /fwä /zAn">
+		<meta property="og:site_name" content="/Doo fwä ẓän/">
 
 	<meta property="og:type" content="article">
 	<meta property="article:author" content="">
@@ -64,7 +64,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="./">Doo /fwä /zAn</a>
+                <a class="navbar-brand" href="./">/Doo fwä ẓän/</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -103,9 +103,9 @@
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
     <!-- Post Content -->
     <article>
-        <p><a class="reference external" href="./oop-ml.html">See post on OOP tips for data preparation</a></p>
+        <p><a class="reference external" href="./oop-ml.html">See post on OOP tips for data preparation</a> for machine learning projects.</p>
 <p>This open-source ML project is to predict serious delinquency of credit borrowers.</p>
-<p>One strategy is to build a master loop through scikit's library to learn the "best" model. For new practitioners, <strong>this angle has some serious pedagogical drawbacks</strong>, but it is easily implemented. Here's the gist of the model selection loop to get you familiar with the objective here.  I've called it the <tt class="docutils literal">splitter</tt> function because it splits the training set into cross-validation sets with each iteration of a model.</p>
+<p>One strategy is to build a master loop through scikit's library to learn the "best" model. For new practitioners, <strong>this angle suffers some serious pedagogical trade-offs</strong>, but it <em>is</em> easily implemented. Here's the gist of the model selection loop to get you familiar with the objective here.  I've called it the <tt class="docutils literal">splitter</tt> function because it splits the training set into cross-validation sets with each iteration of a model.</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">splitter</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">ModelTrains</span><span class="p">,</span> <span class="n">models_to_run</span> <span class="o">=</span> <span class="p">[</span><span class="s">'RFR'</span><span class="p">,</span> <span class="s">'DTR'</span><span class="p">,</span> <span class="s">'KNNR'</span><span class="p">,</span> <span class="s">'KNN'</span><span class="p">,</span> <span class="s">'DT'</span><span class="p">,</span> <span class="s">'RF'</span><span class="p">,</span><span class="s">'LR'</span><span class="p">,</span><span class="s">'ET'</span><span class="p">,</span><span class="s">'AB'</span><span class="p">,</span><span class="s">'GB'</span><span class="p">],</span>
                   <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_features</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">testsize</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">imputation_stats_and_methods</span><span class="o">=</span><span class="p">{},</span>
                   <span class="n">results_dataframe</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">regress_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s">'roc_auc_score'</span><span class="p">,</span>
@@ -249,7 +249,7 @@
 </pre></div>
 <p>With each new "best" model, we take several snapshots of the model's performance, using the <a class="reference internal" href="#bestmodel"><tt class="docutils literal">replace_best_model</tt></a> function.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#feature-importance"><strong>Feature Impotance</strong></a></li>
+<li><a class="reference internal" href="#feature-importance"><strong>Feature Importance</strong></a></li>
 <li><a class="reference internal" href="#precision"><strong>Precision-Recall</strong></a></li>
 <li><a class="reference internal" href="#roc-by-classifier"><strong>ROC Curves</strong></a></li>
 </ul>
